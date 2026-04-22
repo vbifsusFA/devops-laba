@@ -1,30 +1,43 @@
-name: CI
+name: CI Pipeline
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: ⚙️ Setup .NET
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
-          cache: true  # Включает автоматическое кэширование NuGet-пакетов
+          dotnet-version: '9.0.x'
 
-      - name: 📦 Restore dependencies
+      - name: Restore
         run: dotnet restore
 
-      - name: 🔨 Build
+      - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: 🧪 Test
-        run: dotnet test --no-build --configuration Release --verbosity normal --logger "console;verbosity=detailed"
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Test
+        run: dotnet test --configuration Release
