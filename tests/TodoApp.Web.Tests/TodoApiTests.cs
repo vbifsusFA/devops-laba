@@ -81,6 +81,14 @@ public class TodoApiTests : IClassFixture<CustomWebApplicationFactory<Program>>
         var todos = await response.Content.ReadFromJsonAsync<System.Collections.Generic.IEnumerable<TodoApp.Application.DTOs.TodoDto>>();
         todos.Should().NotBeEmpty();
     }
+    [Fact]
+    public async Task Register_ReturnsBadRequest_WhenPasswordIsEmpty()
+    {
+        var response = await _client.PostAsJsonAsync(
+            "/api/v1/auth/register",
+            new RegisterRequest("test@example.com", ""));
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 
     public record LoginResponse(string Token);
 }
