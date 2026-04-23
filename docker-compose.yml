@@ -6,7 +6,7 @@ services:
     image: postgres:15-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_DB:       ${POSTGRES_DB:-db}
       POSTGRES_USER:     ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
@@ -27,14 +27,14 @@ services:
     environment:
   
       ConnectionStrings__DefaultConnection: >-
-        Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};
-        Database=${POSTGRES_DB};Username=${POSTGRES_USER};
+        Host=${POSTGRES_HOST:-locslhost};Port=${POSTGRES_PORT:-5432};
+        Database=${POSTGRES_DB:-db};Username=${POSTGRES_USER};
         Password=${POSTGRES_PASSWORD}
 
       JwtSettings__Key:                  ${JWT_KEY}
-      JwtSettings__Issuer:               ${JWT_ISSUER}
-      JwtSettings__Audience:             ${JWT_AUDIENCE}
-      JwtSettings__ExpirationInMinutes:  ${JWT_EXPIRATION_MINUTES}
+      JwtSettings__Issuer:               ${JWT_ISSUER:-hello}
+      JwtSettings__Audience:             ${JWT_AUDIENCE:-users}
+      JwtSettings__ExpirationInMinutes:  ${JWT_EXPIRATION_MINUTES:-10}
 
       ASPNETCORE_URLS: http://+:8080
     depends_on:
